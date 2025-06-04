@@ -1,0 +1,178 @@
+openapi: 3.0.0
+info:
+  title: News API
+  version: 1.0.0
+  description: API for managing news articles and topics.
+
+servers:
+  - url: http://localhost:3000/api
+
+components:
+  schemas:
+    Topic:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      required: [name]
+
+    News:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        status:
+          type: string
+          enum: [draft, published, deleted]
+        topicIds:
+          type: array
+          items:
+            type: integer
+      required: [title, content, status, topicIds]
+
+paths:
+  /topics:
+    get:
+      summary: Get all topics
+      responses:
+        "200":
+          description: A list of topics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Topic"
+    post:
+      summary: Create a topic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Topic"
+      responses:
+        "201":
+          description: Topic created
+
+  /topics/{id}:
+    get:
+      summary: Get a single topic
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Topic detail
+    put:
+      summary: Update a topic
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Topic"
+      responses:
+        "200":
+          description: Topic updated
+    delete:
+      summary: Delete a topic
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Topic deleted
+
+  /news:
+    get:
+      summary: Get all news articles
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [draft, published, deleted]
+        - in: query
+          name: topicId
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A list of news articles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/News"
+    post:
+      summary: Create a news article
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/News"
+      responses:
+        "201":
+          description: News created
+
+  /news/{id}:
+    get:
+      summary: Get a single news article
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: News detail
+    put:
+      summary: Update a news article
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/News"
+      responses:
+        "200":
+          description: News updated
+    delete:
+      summary: Delete a news article
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: News deleted
