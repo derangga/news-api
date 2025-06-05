@@ -8,3 +8,7 @@ migrate_down:
 
 run_api:
 	go run cmd/main/main.go
+
+mocks_gen:
+	mockgen -source=internal/usecase/usecase.go -destination=mocks/usecase/usecase.go
+	mockgen -source=internal/repository/repository.go -destination=mocks/repository/repository.go

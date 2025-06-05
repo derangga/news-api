@@ -21,7 +21,9 @@ func NewTopicRepository(db *sqlx.DB) TopicsRepository {
 }
 
 func (r topicRepository) Create(ctx context.Context, entity *entity.Topic) error {
-	query := `INSERT INTO topics (name, description, slug) VALUES (:name, :description, :slug)`
+	query := `INSERT INTO topics (name, description, slug) 
+			VALUES (:name, :description, :slug)
+			RETURNING id`
 	stmt, err := r.db.PrepareNamedContext(ctx, query)
 	if err != nil {
 		return err
@@ -41,8 +43,7 @@ func (r topicRepository) GetAll(ctx context.Context) ([]entity.Topic, error) {
 	query := `
 	SELECT id, name, description, slug, created_at, updated_at, deleted_at 
 	FROM topics 
-	WHERE deleted_at IS NULL
-`
+	WHERE deleted_at IS NULL`
 	var topics []entity.Topic
 	err := r.db.SelectContext(ctx, &topics, query)
 	if err != nil {

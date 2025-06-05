@@ -16,7 +16,7 @@ func NewUsersRepository(db *sqlx.DB) UsersRepository {
 }
 
 func (r usersRepository) Create(ctx context.Context, entity *entity.User) error {
-	query := `INSERT INTO users (name, email) VALUES (:name, :email)`
+	query := `INSERT INTO users (name, email) VALUES (:name, :email) RETURNING id`
 
 	stmt, err := r.db.PrepareNamedContext(ctx, query)
 	if err != nil {
