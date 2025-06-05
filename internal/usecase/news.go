@@ -134,7 +134,7 @@ func (u newsArticlesUsecase) UpdateNewsArticleBySlug(
 		updateFields = append(updateFields, "content")
 	}
 
-	if body.Summary != nil {
+	if body.Summary != nil && *body.Summary != *currentNews.Summary {
 		updatedNews.Summary = body.Summary
 		updateFields = append(updateFields, "summary")
 	}
@@ -154,14 +154,16 @@ func (u newsArticlesUsecase) UpdateNewsArticleBySlug(
 		return exception.ErrNoFieldUpdate
 	}
 
-	err = u.newsArticlesrepo.UpdateArticleFields(ctx, &currentNews, updateFields)
-	if err != nil {
-		// Handle unique constraint violation
-		if valid, hint := utils.IsDuplicateKey(err); valid {
-			return errors.New(hint)
+	if len(updateFields) > 0 {
+		err = u.newsArticlesrepo.UpdateArticleFields(ctx, &currentNews, updateFields)
+		if err != nil {
+			// Handle unique constraint violation
+			if valid, hint := utils.IsDuplicateKey(err); valid {
+				return errors.New(hint)
+			}
+			log.Errorf("failed update news: %s", err.Error())
+			return exception.ErrFailedUpdateNews
 		}
-		log.Errorf("failed update news: %s", err.Error())
-		return exception.ErrFailedUpdateNews
 	}
 
 	if body.TopicIDs != nil {
