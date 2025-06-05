@@ -24,6 +24,10 @@ func provideDB(config env.DatabaseConfig) *sqlx.DB {
 	return db.NewPostgresDatabase(config)
 }
 
+func provideUsersRepository(db *sqlx.DB) repository.UsersRepository {
+	return repository.NewUsersRepository(db)
+}
+
 func provideTopicsRepository(db *sqlx.DB) repository.TopicsRepository {
 	return repository.NewTopicRepository(db)
 }
@@ -36,6 +40,10 @@ func provideNewsTopicsRepository(db *sqlx.DB) repository.NewsTopicsRepository {
 	return repository.NewNewsTopicsRepository(db)
 }
 
+func provideUsersUsecase(repos repository.UsersRepository) usecase.UsersUsecase {
+	return usecase.NewUsersUsecase(repos)
+}
+
 func provideTopicsUsecase(repos repository.TopicsRepository) usecase.TopicsUsecase {
 	return usecase.NewTopicsUsecase(repos)
 }
@@ -45,6 +53,13 @@ func provideNewsUsecase(
 	newsTopics repository.NewsTopicsRepository,
 ) usecase.NewsUsecase {
 	return usecase.NewNewsArticlesUsecase(newsArticles, newsTopics)
+}
+
+func provideUsersHandler(
+	validator *validator.Validate,
+	uc usecase.UsersUsecase,
+) handler.UsersHandler {
+	return handler.NewUsersHandler(validator, uc)
 }
 
 func provideTopicsHandler(
@@ -61,10 +76,11 @@ func provideNewsHandler(validator *validator.Validate,
 }
 
 func provideHandlerRegistry(
+	usersHandler handler.UsersHandler,
 	topicsHandler handler.TopicsHandler,
 	newsHandler handler.NewsHandler,
 ) handler.HandlerRegistry {
-	return handler.NewHandlerRegistry(topicsHandler, newsHandler)
+	return handler.NewHandlerRegistry(usersHandler, topicsHandler, newsHandler)
 }
 
 func provideHttpServer(env *env.Config, handler handler.HandlerRegistry) *server.HttpServer {
@@ -75,14 +91,17 @@ func InitHTTPServer() *server.HttpServer {
 	validator := provideValidator()
 	config := provideConfig()
 	sqlClient := provideDB(config.DatabaseConfig)
+	usersRepo := provideUsersRepository(sqlClient)
 	topicsRepo := provideTopicsRepository(sqlClient)
 	newsArticlesRepo := provideNewsArticlesRepository(sqlClient)
 	newsTopicsRepo := provideNewsTopicsRepository(sqlClient)
+	usersUC := provideUsersUsecase(usersRepo)
 	topicsUC := provideTopicsUsecase(topicsRepo)
 	newsUC := provideNewsUsecase(newsArticlesRepo, newsTopicsRepo)
+	usersHandler := provideUsersHandler(validator, usersUC)
 	topicsHandler := provideTopicsHandler(validator, topicsUC)
 	newsHandler := provideNewsHandler(validator, newsUC)
-	handlerRegistry := provideHandlerRegistry(topicsHandler, newsHandler)
+	handlerRegistry := provideHandlerRegistry(usersHandler, topicsHandler, newsHandler)
 	httpServer := provideHttpServer(config, handlerRegistry)
 
 	return httpServer

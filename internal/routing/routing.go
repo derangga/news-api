@@ -24,9 +24,20 @@ func NewAppRoutes(
 
 func (r AppRoutes) RegisterRoute() {
 	h := r.handler
-	r.registerRoute(r.echo, http.MethodGet, "/", h.TopicsHandler.GetTopics)
+
+	users := r.echo.Group("/api/v1/users")
+	r.registerGroupRoute(users, http.MethodPost, "", h.UsersHandler.CreateUser)
+
+	topics := r.echo.Group("/api/v1/topics")
+	r.registerGroupRoute(topics, http.MethodGet, "", h.TopicsHandler.GetTopics)
+	r.registerGroupRoute(topics, http.MethodPost, "", h.TopicsHandler.CreateTopic)
+	r.registerGroupRoute(topics, http.MethodPatch, "/:id", h.TopicsHandler.UpdateTopic)
 }
 
-func (r AppRoutes) registerRoute(e *echo.Echo, method string, path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) {
-	e.Add(method, path, h, m...)
+func (r AppRoutes) registerGroupRoute(g *echo.Group, method string, path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) {
+	g.Add(method, path, h, m...)
+}
+
+func (r AppRoutes) registerRoute(method string, path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) {
+	r.echo.Add(method, path, h, m...)
 }

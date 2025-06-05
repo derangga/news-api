@@ -9,6 +9,25 @@ servers:
 
 components:
   schemas:
+    CreateTopicRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        slug:
+          type: string
+      required: [name, description, slug]
+    UpdateTopicRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        slug:
+          type: string
     Topic:
       type: object
       properties:
@@ -56,7 +75,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Topic"
+              $ref: "#/components/schemas/CreateTopicRequest"
       responses:
         "201":
           description: Topic created
@@ -86,7 +105,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Topic"
+              $ref: "#/components/schemas/UpdateTopicRequest"
       responses:
         "200":
           description: Topic updated
