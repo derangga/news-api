@@ -32,6 +32,13 @@ func (r AppRoutes) RegisterRoute() {
 	r.registerGroupRoute(topics, http.MethodGet, "", h.TopicsHandler.GetTopics)
 	r.registerGroupRoute(topics, http.MethodPost, "", h.TopicsHandler.CreateTopic)
 	r.registerGroupRoute(topics, http.MethodPatch, "/:id", h.TopicsHandler.UpdateTopic)
+
+	newsArticle := r.echo.Group("/api/v1/news")
+	r.registerGroupRoute(newsArticle, http.MethodGet, "", h.NewsArticlesHandler.GetNewsArticles)
+	r.registerGroupRoute(newsArticle, http.MethodPost, "", h.NewsArticlesHandler.CreateNews)
+	r.registerGroupRoute(newsArticle, http.MethodGet, "/:slug", h.NewsArticlesHandler.GetNewsBySlug)
+	r.registerGroupRoute(newsArticle, http.MethodPatch, "/:slug", h.NewsArticlesHandler.UpdateNewsArticle)
+	r.registerGroupRoute(newsArticle, http.MethodDelete, "/:slug", h.NewsArticlesHandler.DeleteNewsArticle)
 }
 
 func (r AppRoutes) registerGroupRoute(g *echo.Group, method string, path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) {

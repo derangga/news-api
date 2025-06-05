@@ -52,13 +52,7 @@ func (u topicsUsecase) GetTopics(ctx context.Context) ([]response.Topic, error) 
 
 	res := []response.Topic{}
 	for _, t := range topics {
-		res = append(res, response.Topic{
-			ID:          t.ID,
-			Name:        t.Name,
-			Description: t.Description,
-			Slug:        t.Slug,
-			UpdatedAt:   t.UpdatedAt,
-		})
+		res = append(res, response.TopicSeriliazer(t))
 	}
 
 	return res, nil
@@ -75,11 +69,9 @@ func (u topicsUsecase) UpdateTopic(ctx context.Context, body request.UpdateTopic
 		return exception.ErrFailedUpdateTopic
 	}
 
-	// Prepare update fields
 	updateFields := make([]string, 0)
 	updatedTopic := currentTopic
 
-	// Check each field for changes
 	if body.Name != nil && *body.Name != currentTopic.Name {
 		updatedTopic.Name = *body.Name
 		updateFields = append(updateFields, "name")
@@ -97,15 +89,12 @@ func (u topicsUsecase) UpdateTopic(ctx context.Context, body request.UpdateTopic
 		updateFields = append(updateFields, "slug")
 	}
 
-	// If no fields to update, return existing topic
 	if len(updateFields) == 0 {
 		return exception.ErrNoFieldUpdate
 	}
 
-	// Perform update
-	err = u.repo.Update(ctx, &updatedTopic, updateFields)
+	err = u.repo.UpdateTopicFileds(ctx, &updatedTopic, updateFields)
 	if err != nil {
-		// Handle unique constraint violation
 		if valid, hint := utils.IsDuplicateKey(err); valid {
 			return errors.New(hint)
 		}

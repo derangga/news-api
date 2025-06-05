@@ -68,7 +68,7 @@ func (r topicRepository) GetByID(ctx context.Context, id int) (entity.Topic, err
 	return topic, nil
 }
 
-func (r topicRepository) Update(ctx context.Context, topic *entity.Topic, updateFields []string) error {
+func (r topicRepository) UpdateTopicFileds(ctx context.Context, topic *entity.Topic, updateFields []string) error {
 	query := "UPDATE topics SET "
 	setClauses := make([]string, 0, len(updateFields)+1)
 	args := make([]interface{}, 0, len(updateFields)+1)
@@ -87,7 +87,6 @@ func (r topicRepository) Update(ctx context.Context, topic *entity.Topic, update
 		}
 	}
 
-	// Always update updated_at
 	setClauses = append(setClauses, fmt.Sprintf("updated_at = $%d", len(updateFields)+1))
 	args = append(args, time.Now())
 

@@ -15,8 +15,7 @@ type UpdateNewsArticleRequest struct {
 	Title    *string `json:"title,omitempty" validate:"omitempty,min=5,max=255"`
 	Content  *string `json:"content,omitempty" validate:"omitempty,min=10"`
 	Summary  *string `json:"summary,omitempty" validate:"omitempty,max=500"`
-	AuthorID *int    `json:"author_id,omitempty" validate:"omitempty,min=1"`
 	Slug     *string `json:"slug,omitempty" validate:"omitempty,min=5,max=255"`
 	Status   *string `json:"status,omitempty" validate:"omitempty,oneof=draft published deleted"`
-	TopicIDs []int   `json:"topic_ids,omitempty" validate:"omitempty,dive,min=1"`
+	TopicIDs []int32 `json:"topic_ids,omitempty" validate:"omitempty,dive,min=1"`
 }
