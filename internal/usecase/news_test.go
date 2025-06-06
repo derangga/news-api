@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"newsapi/internal/exception"
+	"newsapi/internal/model/dto"
 	"newsapi/internal/model/entity"
 	"newsapi/internal/model/request"
 	"newsapi/internal/model/response"
@@ -185,6 +186,7 @@ func Test_GetNewsArticles(t *testing.T) {
 	uc := accessor.uc
 	ctx := context.Background()
 
+	filter := dto.NewsFilter{}
 	tests := []struct {
 		testname  string
 		initMock  func()
@@ -193,7 +195,7 @@ func Test_GetNewsArticles(t *testing.T) {
 		{
 			testname: "get articles repo return error then usecase return error",
 			initMock: func() {
-				newsArticleRepo.EXPECT().GetAll(gomock.Any()).Return(nil, errors.New("failed retrieve"))
+				newsArticleRepo.EXPECT().GetAll(gomock.Any(), gomock.Any()).Return(nil, errors.New("failed retrieve"))
 			},
 			assertion: func(res []response.NewsArticle, err error) {
 				assert.Error(t, err)
@@ -203,8 +205,8 @@ func Test_GetNewsArticles(t *testing.T) {
 		{
 			testname: "get articles valid data",
 			initMock: func() {
-				newsArticleRepo.EXPECT().GetAll(gomock.Any()).Return(
-					[]entity.NewsArticle{
+				newsArticleRepo.EXPECT().GetAll(gomock.Any(), gomock.Any()).Return(
+					[]entity.NewsArticleWithTopicID{
 						{
 							ID:        1,
 							Title:     "Old Title",
@@ -229,7 +231,7 @@ func Test_GetNewsArticles(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.testname, func(t *testing.T) {
 			tt.initMock()
-			res, err := uc.GetNewsArticles(ctx)
+			res, err := uc.GetNewsArticles(ctx, filter)
 			tt.assertion(res, err)
 		})
 	}

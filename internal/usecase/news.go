@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"newsapi/internal/exception"
+	"newsapi/internal/model/dto"
 	"newsapi/internal/model/entity"
 	"newsapi/internal/model/request"
 	"newsapi/internal/model/response"
@@ -75,8 +76,8 @@ func (u newsArticlesUsecase) CreateNewsArticle(
 	return nil
 }
 
-func (u newsArticlesUsecase) GetNewsArticles(ctx context.Context) ([]response.NewsArticle, error) {
-	newsArticles, err := u.newsArticlesrepo.GetAll(ctx)
+func (u newsArticlesUsecase) GetNewsArticles(ctx context.Context, filter dto.NewsFilter) ([]response.NewsArticle, error) {
+	newsArticles, err := u.newsArticlesrepo.GetAll(ctx, filter)
 	if err != nil {
 		log.Errorf("failed get topic: %w", err)
 		return nil, exception.ErrFailedGetNews

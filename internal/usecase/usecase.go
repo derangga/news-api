@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"newsapi/internal/model/dto"
 	"newsapi/internal/model/request"
 	"newsapi/internal/model/response"
 )
@@ -12,7 +13,7 @@ type UsersUsecase interface {
 
 type NewsUsecase interface {
 	CreateNewsArticle(ctx context.Context, body request.CreateNewsArticleRequest) error
-	GetNewsArticles(ctx context.Context) ([]response.NewsArticle, error)
+	GetNewsArticles(ctx context.Context, filter dto.NewsFilter) ([]response.NewsArticle, error)
 	GetNewsArticleBySlug(ctx context.Context, slug string) (response.NewsArticleWithTopic, error)
 	UpdateNewsArticleBySlug(ctx context.Context, slug string, body request.UpdateNewsArticleRequest) error
 	DeleteNewsArticleBySlug(ctx context.Context, slug string) error

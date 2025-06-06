@@ -11,7 +11,8 @@ type NewsArticle struct {
 	Content     string               `json:"content"`
 	Summary     *string              `json:"summary"`
 	AuthorID    int                  `json:"author_id"`
-	Slug        string               `json:"slug" db:"slug"`
+	Slug        string               `json:"slug"`
+	TopicIDs    []int32              `json:"topic_ids"`
 	Status      entity.ArticleStatus `json:"status"`
 	PublishedAt *time.Time           `json:"published_at"`
 	CreatedAt   time.Time            `json:"created_at"`
@@ -19,7 +20,7 @@ type NewsArticle struct {
 	DeletedAt   *time.Time           `json:"deleted_at"`
 }
 
-func NewsArticleSeriliazer(entity entity.NewsArticle) NewsArticle {
+func NewsArticleSeriliazer(entity entity.NewsArticleWithTopicID) NewsArticle {
 	pub := &entity.PublishedAt.Time
 	del := &entity.DeletedAt.Time
 
@@ -37,6 +38,7 @@ func NewsArticleSeriliazer(entity entity.NewsArticle) NewsArticle {
 		AuthorID:    entity.AuthorID,
 		Slug:        entity.Slug,
 		Status:      entity.Status,
+		TopicIDs:    append([]int32(nil), entity.TopicIDs...),
 		PublishedAt: pub,
 		CreatedAt:   entity.CreatedAt,
 		UpdatedAt:   entity.UpdatedAt,

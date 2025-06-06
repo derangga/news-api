@@ -4,9 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"newsapi/internal/model/dto"
 	"newsapi/internal/model/entity"
 	"newsapi/internal/repository"
 	"newsapi/internal/utils"
+	"regexp"
 	"testing"
 	"time"
 
@@ -205,6 +207,106 @@ func Test_GetActiveArticleBySlug(t *testing.T) {
 		t.Run(tt.testname, func(t *testing.T) {
 			tt.initMock(tt.slug)
 			result, err := repos.GetActiveArticleBySlug(ctx, tt.slug)
+			tt.assertion(result, err)
+		})
+	}
+}
+
+func Test_GetAll(t *testing.T) {
+	mockDb, sqlxDB, mockSql := utils.GenerateMockDb()
+	defer mockDb.Close()
+
+	repos := repository.NewNewsArticlesRepository(sqlxDB)
+	ctx := context.Background()
+
+	tests := []struct {
+		name      string
+		filter    dto.NewsFilter
+		initMock  func()
+		assertion func([]entity.NewsArticleWithTopicID, error)
+	}{
+		{
+			name: "returns articles successfully",
+			filter: dto.NewsFilter{
+				Status:  "published",
+				TopicID: "1",
+			},
+			initMock: func() {
+				query := regexp.QuoteMeta(`
+					SELECT
+						na.id,
+						na.title,
+						na.summary,
+						na.author_id,
+						na.slug,
+						na.status,
+						na.published_at,
+						na.created_at,
+						ARRAY_AGG(nt.topic_id) AS topic_ids
+					FROM news_articles na
+					INNER JOIN news_topics nt ON na.id = nt.news_article_id
+					WHERE
+						na.deleted_at IS NULL
+						AND nt.deleted_at IS NULL
+						AND na.status = $1
+						AND nt.topic_id = $2
+					GROUP BY na.id, na.title, na.summary, na.author_id, na.slug, na.status, na.published_at, na.created_at
+				`)
+
+				rows := sqlmock.NewRows([]string{
+					"id", "title", "summary", "author_id", "slug", "status",
+					"published_at", "created_at", "topic_ids",
+				}).
+					AddRow(1, "Test Title", "Summary", 100, "test-slug", "published", time.Now(), time.Now(), pq.Int32Array{1, 2})
+
+				mockSql.ExpectQuery(query).
+					WithArgs("published", "1").
+					WillReturnRows(rows)
+			},
+			assertion: func(result []entity.NewsArticleWithTopicID, err error) {
+				assert.NoError(t, err)
+				assert.Len(t, result, 1)
+				assert.Equal(t, "Test Title", result[0].Title)
+				assert.Equal(t, pq.Int32Array{1, 2}, result[0].TopicIDs)
+			},
+		},
+		{
+			name:   "returns error on query failure",
+			filter: dto.NewsFilter{},
+			initMock: func() {
+				query := regexp.QuoteMeta(`
+					SELECT
+						na.id,
+						na.title,
+						na.summary,
+						na.author_id,
+						na.slug,
+						na.status,
+						na.published_at,
+						na.created_at,
+						ARRAY_AGG(nt.topic_id) AS topic_ids
+					FROM news_articles na
+					INNER JOIN news_topics nt ON na.id = nt.news_article_id
+					WHERE
+						na.deleted_at IS NULL
+						AND nt.deleted_at IS NULL
+					GROUP BY na.id, na.title, na.summary, na.author_id, na.slug, na.status, na.published_at, na.created_at
+				`)
+
+				mockSql.ExpectQuery(query).
+					WillReturnError(errors.New("db error"))
+			},
+			assertion: func(result []entity.NewsArticleWithTopicID, err error) {
+				assert.Error(t, err)
+				assert.Nil(t, result)
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.initMock()
+			result, err := repos.GetAll(ctx, tt.filter)
 			tt.assertion(result, err)
 		})
 	}

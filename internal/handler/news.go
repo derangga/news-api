@@ -2,6 +2,8 @@ package handler
 
 import (
 	"newsapi/internal/exception"
+	"newsapi/internal/model/dto"
+	"newsapi/internal/model/entity"
 	"newsapi/internal/model/request"
 	responder "newsapi/internal/model/response"
 	"newsapi/internal/usecase"
@@ -48,7 +50,15 @@ func (h NewsHandler) CreateNews(c echo.Context) error {
 }
 
 func (h NewsHandler) GetNewsArticles(c echo.Context) error {
-	articles, err := h.uc.GetNewsArticles(c.Request().Context())
+	status := c.QueryParam("status")
+	topicID := c.QueryParam("topic_id")
+
+	filter := dto.NewsFilter{
+		Status:  entity.VerifyStatus(entity.ArticleStatus(status)),
+		TopicID: topicID,
+	}
+
+	articles, err := h.uc.GetNewsArticles(c.Request().Context(), filter)
 	if err != nil {
 		log.Errorf("NewsHandler.getTopics: %w", err)
 		return responder.ResponseUnprocessableEntity(c, "failed get topics")

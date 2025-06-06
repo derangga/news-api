@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"newsapi/internal/model/dto"
 	"newsapi/internal/model/entity"
 )
 
@@ -20,7 +21,7 @@ type NewsArticlesRepository interface {
 	Create(ctx context.Context, entity *entity.NewsArticle) (int, error)
 	GetArticleBySlug(ctx context.Context, slug string) (entity.NewsArticleWithTopic, error)
 	GetActiveArticleBySlug(ctx context.Context, slug string) (entity.ActiveNewsWithTopic, error)
-	GetAll(ctx context.Context) ([]entity.NewsArticle, error)
+	GetAll(ctx context.Context, filter dto.NewsFilter) ([]entity.NewsArticleWithTopicID, error)
 	UpdateArticleFields(ctx context.Context, entity *entity.NewsArticleWithTopic, updateFields []string) error
 	DeleteBySlug(ctx context.Context, slug string) error
 }

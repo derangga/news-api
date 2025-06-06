@@ -11,5 +11,6 @@ CREATE TABLE topics (
 );
 
 CREATE INDEX idx_topics_slug ON topics(slug);
+CREATE INDEX idx_topics_id_name ON topics(id, name);
 
 commit;

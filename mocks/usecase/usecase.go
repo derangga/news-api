@@ -6,6 +6,7 @@ package mock_usecase
 
 import (
 	context "context"
+	dto "newsapi/internal/model/dto"
 	request "newsapi/internal/model/request"
 	response "newsapi/internal/model/response"
 	reflect "reflect"
@@ -117,18 +118,18 @@ func (mr *MockNewsUsecaseMockRecorder) GetNewsArticleBySlug(ctx, slug interface{
 }
 
 // GetNewsArticles mocks base method.
-func (m *MockNewsUsecase) GetNewsArticles(ctx context.Context) ([]response.NewsArticle, error) {
+func (m *MockNewsUsecase) GetNewsArticles(ctx context.Context, filter dto.NewsFilter) ([]response.NewsArticle, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetNewsArticles", ctx)
+	ret := m.ctrl.Call(m, "GetNewsArticles", ctx, filter)
 	ret0, _ := ret[0].([]response.NewsArticle)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetNewsArticles indicates an expected call of GetNewsArticles.
-func (mr *MockNewsUsecaseMockRecorder) GetNewsArticles(ctx interface{}) *gomock.Call {
+func (mr *MockNewsUsecaseMockRecorder) GetNewsArticles(ctx, filter interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNewsArticles", reflect.TypeOf((*MockNewsUsecase)(nil).GetNewsArticles), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNewsArticles", reflect.TypeOf((*MockNewsUsecase)(nil).GetNewsArticles), ctx, filter)
 }
 
 // UpdateNewsArticleBySlug mocks base method.

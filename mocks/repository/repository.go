@@ -6,6 +6,7 @@ package mock_repository
 
 import (
 	context "context"
+	dto "newsapi/internal/model/dto"
 	entity "newsapi/internal/model/entity"
 	reflect "reflect"
 
@@ -198,18 +199,18 @@ func (mr *MockNewsArticlesRepositoryMockRecorder) GetActiveArticleBySlug(ctx, sl
 }
 
 // GetAll mocks base method.
-func (m *MockNewsArticlesRepository) GetAll(ctx context.Context) ([]entity.NewsArticle, error) {
+func (m *MockNewsArticlesRepository) GetAll(ctx context.Context, filter dto.NewsFilter) ([]entity.NewsArticleWithTopicID, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAll", ctx)
-	ret0, _ := ret[0].([]entity.NewsArticle)
+	ret := m.ctrl.Call(m, "GetAll", ctx, filter)
+	ret0, _ := ret[0].([]entity.NewsArticleWithTopicID)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAll indicates an expected call of GetAll.
-func (mr *MockNewsArticlesRepositoryMockRecorder) GetAll(ctx interface{}) *gomock.Call {
+func (mr *MockNewsArticlesRepositoryMockRecorder) GetAll(ctx, filter interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockNewsArticlesRepository)(nil).GetAll), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockNewsArticlesRepository)(nil).GetAll), ctx, filter)
 }
 
 // GetArticleBySlug mocks base method.

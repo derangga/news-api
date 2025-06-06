@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"newsapi/internal/model/dto"
 	"newsapi/internal/model/entity"
 	"strings"
 	"time"
@@ -91,15 +92,43 @@ func (r newsArticlesRepository) GetActiveArticleBySlug(ctx context.Context, slug
 	return newsArticle, nil
 }
 
-func (r newsArticlesRepository) GetAll(ctx context.Context) ([]entity.NewsArticle, error) {
+func (r newsArticlesRepository) GetAll(ctx context.Context, filter dto.NewsFilter) ([]entity.NewsArticleWithTopicID, error) {
 	query := `
-	SELECT id, title, content, summary, author_id, slug, status, 
-	published_at, created_at, updated_at
-	FROM news_articles 
-	WHERE deleted_at IS NULL
-`
-	var newsArticles []entity.NewsArticle
-	err := r.db.SelectContext(ctx, &newsArticles, query)
+			SELECT
+				na.id,
+				na.title,
+				na.summary,
+				na.author_id,
+				na.slug,
+				na.status,
+				na.published_at,
+				na.created_at,
+				ARRAY_AGG(nt.topic_id) AS topic_ids
+			FROM news_articles na
+			INNER JOIN news_topics nt ON na.id = nt.news_article_id
+			WHERE
+				na.deleted_at IS NULL
+				AND nt.deleted_at IS NULL
+		`
+
+	var args []interface{}
+	paramIdx := 1
+
+	if filter.Status != "" {
+		query += fmt.Sprintf(" AND na.status = $%d", paramIdx)
+		args = append(args, filter.Status)
+		paramIdx++
+	}
+	if filter.TopicID != "" {
+		query += fmt.Sprintf(" AND nt.topic_id = $%d", paramIdx)
+		args = append(args, filter.TopicID)
+		paramIdx++
+	}
+
+	query += " GROUP BY na.id, na.title, na.summary, na.author_id, na.slug, na.status, na.published_at, na.created_at"
+
+	var newsArticles []entity.NewsArticleWithTopicID
+	err := r.db.SelectContext(ctx, &newsArticles, query, args...)
 	if err != nil {
 		return nil, err
 	}

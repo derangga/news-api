@@ -125,7 +125,7 @@ func Test_GetNewsArticles(t *testing.T) {
 			name: "usecase returns error, expect 422",
 			initMock: func() {
 				accessor.newsUC.EXPECT().
-					GetNewsArticles(gomock.Any()).
+					GetNewsArticles(gomock.Any(), gomock.Any()).
 					Return(nil, errors.New("unexpected error"))
 			},
 			assertion: func(ctx echo.Context, rr *httptest.ResponseRecorder, err error) {
@@ -137,7 +137,7 @@ func Test_GetNewsArticles(t *testing.T) {
 			name: "usecase returns articles successfully, expect 200",
 			initMock: func() {
 				accessor.newsUC.EXPECT().
-					GetNewsArticles(gomock.Any()).
+					GetNewsArticles(gomock.Any(), gomock.Any()).
 					Return([]response.NewsArticle{}, nil)
 			},
 			assertion: func(ctx echo.Context, rr *httptest.ResponseRecorder, err error) {
