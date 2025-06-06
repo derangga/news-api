@@ -100,5 +100,5 @@ func (h NewsHandler) DeleteNewsArticle(c echo.Context) error {
 	if err != nil {
 		return responder.ResponseUnprocessableEntity(c, err.Error())
 	}
-	return responder.RespondOK(c, nil, "ok")
+	return responder.RespondOK(c, nil, "news deleted")
 }

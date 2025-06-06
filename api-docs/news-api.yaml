@@ -1,197 +1,438 @@
 openapi: 3.0.0
 info:
   title: News API
-  version: 1.0.0
   description: API for managing news articles and topics.
-
+  version: 1.0.0
 servers:
-  - url: http://localhost:3000/api
-
-components:
-  schemas:
-    CreateTopicRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        slug:
-          type: string
-      required: [name, description, slug]
-    UpdateTopicRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        slug:
-          type: string
-    Topic:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-      required: [name]
-
-    News:
-      type: object
-      properties:
-        id:
-          type: integer
-        title:
-          type: string
-        content:
-          type: string
-        status:
-          type: string
-          enum: [draft, published, deleted]
-        topicIds:
-          type: array
-          items:
-            type: integer
-      required: [title, content, status, topicIds]
+  - url: /api/v1
+    description: Base URL for API v1
 
 paths:
+  /users:
+    post:
+      summary: Create User
+      description: Create a simple user for author news
+      operationId: createUser
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        "201":
+          description: User register successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewUserResponse"
+
   /topics:
     get:
-      summary: Get all topics
+      summary: Get All Topics
+      description: Retrieves a list of all available news topics.
+      operationId: getAllTopics
+      tags:
+        - Topics
       responses:
         "200":
           description: A list of topics
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Topic"
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Topic"
+                  http_status:
+                    type: integer
+                    example: 200
     post:
-      summary: Create a topic
+      summary: Create Topic
+      description: Creates a new news topic.
+      operationId: createTopic
+      tags:
+        - Topics
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateTopicRequest"
+              $ref: "#/components/schemas/TopicCreate"
       responses:
         "201":
-          description: Topic created
+          description: Topic created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
 
   /topics/{id}:
-    get:
-      summary: Get a single topic
+    patch:
+      summary: Update Topic
+      description: Updates an existing news topic by its ID.
+      operationId: updateTopic
+      tags:
+        - Topics
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
+          description: ID of the topic to update
           schema:
             type: integer
-      responses:
-        "200":
-          description: Topic detail
-    put:
-      summary: Update a topic
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
+            format: int64
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateTopicRequest"
+              $ref: "#/components/schemas/TopicUpdate"
       responses:
-        "200":
-          description: Topic updated
-    delete:
-      summary: Delete a topic
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-      responses:
-        "204":
-          description: Topic deleted
+        "201":
+          description: Topic updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
 
   /news:
     get:
-      summary: Get all news articles
-      parameters:
-        - in: query
-          name: status
-          schema:
-            type: string
-            enum: [draft, published, deleted]
-        - in: query
-          name: topicId
-          schema:
-            type: integer
+      summary: Get All News
+      description: Retrieves a list of all news articles.
+      operationId: getAllNews
+      tags:
+        - News
       responses:
         "200":
           description: A list of news articles
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/News"
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/News"
+                  http_status:
+                    type: integer
+                    example: 200
     post:
-      summary: Create a news article
+      summary: Create News
+      description: Creates a new news article.
+      operationId: createNews
+      tags:
+        - News
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/News"
+              $ref: "#/components/schemas/NewsCreate"
       responses:
         "201":
-          description: News created
+          description: News created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
 
-  /news/{id}:
+  /news/{slug}:
     get:
-      summary: Get a single news article
+      summary: Get News by Slug
+      description: Retrieves a single news article by its slug.
+      operationId: getNewsBySlug
+      tags:
+        - News
       parameters:
-        - in: path
-          name: id
+        - name: slug
+          in: path
           required: true
+          description: Slug of the news article to retrieve
           schema:
-            type: integer
+            type: string
       responses:
         "200":
-          description: News detail
-    put:
-      summary: Update a news article
+          description: News article details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NewsDetails"
+                  http_status:
+                    type: integer
+                    example: 200
+        "404":
+          description: News not found
+
+    patch:
+      summary: Update News by Slug
+      description: Updates an existing news article by its slug.
+      operationId: updateNewsBySlug
+      tags:
+        - News
       parameters:
-        - in: path
-          name: id
+        - name: slug
+          in: path
           required: true
+          description: Slug of the news article to update
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/News"
+              $ref: "#/components/schemas/NewsUpdate"
       responses:
-        "200":
-          description: News updated
+        "201":
+          description: News updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
     delete:
-      summary: Delete a news article
+      summary: Delete News by Slug
+      description: Deletes a news article by its slug.
+      operationId: deleteNewsBySlug
+      tags:
+        - News
       parameters:
-        - in: path
-          name: id
+        - name: slug
+          in: path
           required: true
+          description: Slug of the news article to delete
           schema:
-            type: integer
+            type: string
       responses:
-        "204":
-          description: News deleted
+        "201":
+          description: News deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+components:
+  schemas:
+    UserCreate:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          example: "john@example.com"
+
+    Topic:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        name:
+          type: string
+          example: "Technology"
+        description:
+          type: string
+          example: "Latest tech news and innovations"
+        slug:
+          type: string
+          example: "technology"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-06-05T06:33:08.982231Z"
+
+    TopicCreate:
+      type: object
+      required:
+        - name
+        - description
+        - slug
+      properties:
+        name:
+          type: string
+          example: "Politics"
+        description:
+          type: string
+          example: "A topic of politics in the world"
+        slug:
+          type: string
+          example: "politics"
+
+    TopicUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Test topic update"
+        description:
+          type: string
+          example: "this is new topic"
+        slug:
+          type: string
+          example: "technology"
+
+    News:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 3
+        title:
+          type: string
+          example: "Draft Article About Tech Trends"
+        content:
+          type: string
+          example: "This is a draft article about upcoming technology trends..."
+        summary:
+          type: string
+          example: "Draft summary of tech trends."
+        author_id:
+          type: integer
+          example: 1
+        slug:
+          type: string
+          example: "draft-tech-trends"
+        status:
+          type: string
+          example: "draft"
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          example: "2025-06-05T09:21:38.878835Z"
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          example: "2025-06-05T09:21:38.878835Z"
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+
+    NewsCreate:
+      type: object
+      required:
+        - title
+        - content
+        - summary
+        - author_id
+        - slug
+        - topic_ids
+      properties:
+        title:
+          type: string
+          example: "Draft Article About Tech Trends"
+        content:
+          type: string
+          example: "This is a draft article about upcoming technology trends..."
+        summary:
+          type: string
+          example: "Draft summary of tech trends."
+        author_id:
+          type: integer
+          example: 1
+        slug:
+          type: string
+          example: "draft-tech-trends"
+        topic_ids:
+          type: array
+          items:
+            type: integer
+          example: [1]
+
+    NewsUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Updated Article About Tech Trends"
+        content:
+          type: string
+          example: "This is an updated draft article about upcoming technology trends..."
+        summary:
+          type: string
+          example: "Updated summary of tech trends."
+        author_id:
+          type: integer
+          example: 1
+        slug:
+          type: string
+          example: "updated-tech-trends"
+        topic_ids:
+          type: array
+          items:
+            type: integer
+          example: [1, 2]
+
+    NewsDetails:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 2
+        title:
+          type: string
+          example: "AI Revolution in Healthcare"
+        content:
+          type: string
+          example: "Artificial Intelligence is transforming healthcare with new diagnostic tools and treatment methods..."
+        slug:
+          type: string
+          example: "ai-revolution-healthcare"
+        author_name:
+          type: string
+          example: "John Doe"
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2025-06-05T14:25:24.591279Z"
+        topics:
+          type: array
+          items:
+            type: string
+          example: ["Health", "Technology"]
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "topic created"
+        http_status:
+          type: integer
+          example: 201
+
+    NewUserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "user registered"
+        http_status:
+          type: integer
+          example: 201
