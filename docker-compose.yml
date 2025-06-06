@@ -12,5 +12,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  news-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: newsapi-app
+    ports:
+      - "8666:8666"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+
 volumes:
   postgres_data:

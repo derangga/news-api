@@ -198,15 +198,15 @@ func (mr *MockTopicsUsecaseMockRecorder) GetTopics(ctx interface{}) *gomock.Call
 }
 
 // UpdateTopic mocks base method.
-func (m *MockTopicsUsecase) UpdateTopic(ctx context.Context, body request.UpdateTopicRequest) error {
+func (m *MockTopicsUsecase) UpdateTopic(ctx context.Context, id int, body request.UpdateTopicRequest) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateTopic", ctx, body)
+	ret := m.ctrl.Call(m, "UpdateTopic", ctx, id, body)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateTopic indicates an expected call of UpdateTopic.
-func (mr *MockTopicsUsecaseMockRecorder) UpdateTopic(ctx, body interface{}) *gomock.Call {
+func (mr *MockTopicsUsecaseMockRecorder) UpdateTopic(ctx, id, body interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTopic", reflect.TypeOf((*MockTopicsUsecase)(nil).UpdateTopic), ctx, body)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTopic", reflect.TypeOf((*MockTopicsUsecase)(nil).UpdateTopic), ctx, id, body)
 }

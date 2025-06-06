@@ -21,5 +21,5 @@ type NewsUsecase interface {
 type TopicsUsecase interface {
 	CreateTopic(ctx context.Context, body request.CreateTopicRequest) error
 	GetTopics(ctx context.Context) ([]response.Topic, error)
-	UpdateTopic(ctx context.Context, body request.UpdateTopicRequest) error
+	UpdateTopic(ctx context.Context, id int, body request.UpdateTopicRequest) error
 }

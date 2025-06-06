@@ -31,7 +31,7 @@ func Test_CreateTopics(t *testing.T) {
 			testname: "insert topic then return error",
 			entity: entity.Topic{
 				Name:        "test",
-				Description: stringPtr("test description"),
+				Description: utils.StringPtr("test description"),
 				Slug:        "slug-example",
 			},
 			initMock: func(t entity.Topic) {
@@ -47,7 +47,7 @@ func Test_CreateTopics(t *testing.T) {
 			testname: "insert topic then return error nil",
 			entity: entity.Topic{
 				Name:        "test",
-				Description: stringPtr("test description"),
+				Description: utils.StringPtr("test description"),
 				Slug:        "slug-example",
 			},
 			initMock: func(t entity.Topic) {
@@ -158,7 +158,7 @@ func Test_UpdateTopics(t *testing.T) {
 			entity: &entity.Topic{
 				ID:          1,
 				Name:        "new Name",
-				Description: stringPtr("new description"),
+				Description: utils.StringPtr("new description"),
 			},
 			updateFields: []string{"name", "description"},
 			initMock: func(tp *entity.Topic) {
@@ -177,7 +177,7 @@ func Test_UpdateTopics(t *testing.T) {
 			entity: &entity.Topic{
 				ID:          1,
 				Name:        "all Fields Updated",
-				Description: stringPtr("this description is updated"),
+				Description: utils.StringPtr("this description is updated"),
 				Slug:        "all-fields-updated",
 			},
 			updateFields: []string{"name", "description", "slug"},
@@ -201,8 +201,4 @@ func Test_UpdateTopics(t *testing.T) {
 			tt.assertion(err)
 		})
 	}
-}
-
-func stringPtr(s string) *string {
-	return &s
 }

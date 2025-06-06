@@ -43,7 +43,7 @@ func BuildConfig() *Config {
 		godotenv.Load(".env")
 
 		config.ApplicationConfig = ApplicationConfig{
-			Host:    utils.GetStringEnv("SERVICE_HOST", "127.0.0.1"),
+			Host:    utils.GetStringEnv("SERVICE_HOST", "0.0.0.0"),
 			Port:    utils.GetStringEnv("SERVICE_PORT", "8080"),
 			Service: utils.GetStringEnv("SERVICE_NAME", "echouser"),
 			Timeout: utils.GetDurationEnv("SERVICE_TIMEOUT", "30000ms"),

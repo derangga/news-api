@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"newsapi/internal/exception"
 	"newsapi/internal/model/request"
 	responder "newsapi/internal/model/response"
@@ -70,15 +71,14 @@ func (h TopicsHandler) UpdateTopic(c echo.Context) error {
 		log.Errorf("TopicHandler.bind: %w", err)
 		return responder.ResponseBadRequest(c, "")
 	}
-
+	fmt.Println(req)
 	err = h.validator.Struct(req)
 	if err != nil {
 		log.Errorf("TopicHandler.validateStruct: %w", err)
 		return responder.ResponseBadRequest(c, "update topic require one of [name, description, slug]")
 	}
 
-	req.ID = id
-	if err := h.uc.UpdateTopic(c.Request().Context(), req); err != nil {
+	if err := h.uc.UpdateTopic(c.Request().Context(), id, req); err != nil {
 		if customErr, ok := err.(exception.CustomError); ok && customErr.Code == 20005 {
 			return responder.RespondOK(c, nil, "no field updated")
 		}

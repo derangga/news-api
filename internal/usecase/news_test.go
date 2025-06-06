@@ -9,6 +9,7 @@ import (
 	"newsapi/internal/model/request"
 	"newsapi/internal/model/response"
 	"newsapi/internal/usecase"
+	"newsapi/internal/utils"
 	mock_repository "newsapi/mocks/repository"
 	"testing"
 	"time"
@@ -44,9 +45,6 @@ func Test_CreateNewsArticle(t *testing.T) {
 	uc := accessor.uc
 	ctx := context.Background()
 
-	// Helper function for pointer to string
-	stringPtr := func(s string) *string { return &s }
-
 	tests := []struct {
 		testname  string
 		mockReq   request.CreateNewsArticleRequest
@@ -58,10 +56,10 @@ func Test_CreateNewsArticle(t *testing.T) {
 			mockReq: request.CreateNewsArticleRequest{
 				Title:    "Test Article 1",
 				Content:  "Content of test article 1",
-				Summary:  stringPtr("Summary 1"),
+				Summary:  utils.StringPtr("Summary 1"),
 				AuthorID: 1,
 				Slug:     "test-article-1",
-				Status:   stringPtr("draft"),
+				Status:   utils.StringPtr("draft"),
 				TopicIDs: []int{},
 			},
 			initMock: func() {
@@ -79,7 +77,7 @@ func Test_CreateNewsArticle(t *testing.T) {
 				Summary:  nil,
 				AuthorID: 2,
 				Slug:     "published-article",
-				Status:   stringPtr("published"),
+				Status:   utils.StringPtr("published"),
 				TopicIDs: []int{10, 20, 30},
 			},
 			initMock: func() {
@@ -115,7 +113,7 @@ func Test_CreateNewsArticle(t *testing.T) {
 				Content:  "Content",
 				AuthorID: 4,
 				Slug:     "duplicate-slug-value",
-				Status:   stringPtr("draft"),
+				Status:   utils.StringPtr("draft"),
 			},
 			initMock: func() {
 				newsArticleRepo.EXPECT().Create(ctx, gomock.Any()).
@@ -133,7 +131,7 @@ func Test_CreateNewsArticle(t *testing.T) {
 				Content:  "Content",
 				AuthorID: 5,
 				Slug:     "error-article",
-				Status:   stringPtr("draft"),
+				Status:   utils.StringPtr("draft"),
 			},
 			initMock: func() {
 				newsArticleRepo.EXPECT().Create(ctx, gomock.Any()).
@@ -151,7 +149,7 @@ func Test_CreateNewsArticle(t *testing.T) {
 				Content:  "Content",
 				AuthorID: 6,
 				Slug:     "article-topic-error",
-				Status:   stringPtr("draft"),
+				Status:   utils.StringPtr("draft"),
 				TopicIDs: []int{1, 2},
 			},
 			initMock: func() {
@@ -211,7 +209,7 @@ func Test_GetNewsArticles(t *testing.T) {
 							ID:        1,
 							Title:     "Old Title",
 							Content:   "Old Content",
-							Summary:   stringPtr("Old Summary"),
+							Summary:   utils.StringPtr("Old Summary"),
 							Slug:      "old-slug-1",
 							Status:    entity.StatusDraft,
 							CreatedAt: time.Now(),
@@ -319,9 +317,6 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 	uc := accessor.uc
 	ctx := context.Background()
 
-	// Helper function for pointer to string
-	stringPtr := func(s string) *string { return &s }
-
 	tests := []struct {
 		testname  string
 		slug      string
@@ -333,14 +328,14 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 			testname: "successful update - title only",
 			slug:     "old-slug-1",
 			mockReq: request.UpdateNewsArticleRequest{
-				Title: stringPtr("New Title"),
+				Title: utils.StringPtr("New Title"),
 			},
 			initMock: func() {
 				newsArticleRepo.EXPECT().GetArticleBySlug(ctx, "old-slug-1").Return(entity.NewsArticleWithTopic{
 					ID:        1,
 					Title:     "Old Title",
 					Content:   "Old Content",
-					Summary:   stringPtr("Old Summary"),
+					Summary:   utils.StringPtr("Old Summary"),
 					Slug:      "old-slug-1",
 					Status:    entity.StatusDraft,
 					Topics:    []int32{1, 2},
@@ -357,15 +352,15 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 			testname: "successful update - content and summary",
 			slug:     "old-slug-2",
 			mockReq: request.UpdateNewsArticleRequest{
-				Content: stringPtr("New Content 2"),
-				Summary: stringPtr("New Summary 2"),
+				Content: utils.StringPtr("New Content 2"),
+				Summary: utils.StringPtr("New Summary 2"),
 			},
 			initMock: func() {
 				newsArticleRepo.EXPECT().GetArticleBySlug(ctx, "old-slug-2").Return(entity.NewsArticleWithTopic{
 					ID:        2,
 					Title:     "Title 2",
 					Content:   "Content 2",
-					Summary:   stringPtr("Summary 2"),
+					Summary:   utils.StringPtr("Summary 2"),
 					Slug:      "old-slug-2",
 					Status:    entity.StatusPublished,
 					Topics:    []int32{3},
@@ -382,15 +377,15 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 			testname: "successful update - slug and status",
 			slug:     "old-slug-3",
 			mockReq: request.UpdateNewsArticleRequest{
-				Slug:   stringPtr("new-slug-3"),
-				Status: stringPtr(string(entity.StatusPublished)),
+				Slug:   utils.StringPtr("new-slug-3"),
+				Status: utils.StringPtr(string(entity.StatusPublished)),
 			},
 			initMock: func() {
 				newsArticleRepo.EXPECT().GetArticleBySlug(ctx, "old-slug-3").Return(entity.NewsArticleWithTopic{
 					ID:        3,
 					Title:     "Title 3",
 					Content:   "Content 3",
-					Summary:   stringPtr("Summary 3"),
+					Summary:   utils.StringPtr("Summary 3"),
 					Slug:      "old-slug-3",
 					Status:    entity.StatusDraft,
 					Topics:    []int32{},
@@ -414,7 +409,7 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 					ID:        4,
 					Title:     "Title 4",
 					Content:   "Content 4",
-					Summary:   stringPtr("Summary 4"),
+					Summary:   utils.StringPtr("Summary 4"),
 					Slug:      "slug-4",
 					Status:    entity.StatusDraft,
 					Topics:    []int32{10, 20},
@@ -432,11 +427,11 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 			testname: "successful update - all fields and topics",
 			slug:     "slug-5",
 			mockReq: request.UpdateNewsArticleRequest{
-				Title:    stringPtr("New Title 5"),
-				Content:  stringPtr("New Content 5"),
-				Summary:  stringPtr("New Summary 5"),
-				Slug:     stringPtr("new-slug-5"),
-				Status:   stringPtr(string(entity.StatusPublished)),
+				Title:    utils.StringPtr("New Title 5"),
+				Content:  utils.StringPtr("New Content 5"),
+				Summary:  utils.StringPtr("New Summary 5"),
+				Slug:     utils.StringPtr("new-slug-5"),
+				Status:   utils.StringPtr(string(entity.StatusPublished)),
 				TopicIDs: []int32{100, 200},
 			},
 			initMock: func() {
@@ -444,7 +439,7 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 					ID:        5,
 					Title:     "Old Title 5",
 					Content:   "Old Content 5",
-					Summary:   stringPtr("Old Summary 5"),
+					Summary:   utils.StringPtr("Old Summary 5"),
 					Slug:      "slug-5",
 					Status:    entity.StatusDraft,
 					Topics:    []int32{1, 2},
@@ -462,7 +457,7 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 			testname: "news article not found by slug",
 			slug:     "non-existent-slug",
 			mockReq: request.UpdateNewsArticleRequest{
-				Title: stringPtr("Any Title"),
+				Title: utils.StringPtr("Any Title"),
 			},
 			initMock: func() {
 				newsArticleRepo.EXPECT().GetArticleBySlug(ctx, "non-existent-slug").Return(entity.NewsArticleWithTopic{}, sql.ErrNoRows)
@@ -476,7 +471,7 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 			testname: "failed to get news article - generic error",
 			slug:     "error-slug",
 			mockReq: request.UpdateNewsArticleRequest{
-				Title: stringPtr("Any Title"),
+				Title: utils.StringPtr("Any Title"),
 			},
 			initMock: func() {
 				newsArticleRepo.EXPECT().GetArticleBySlug(ctx, "error-slug").Return(entity.NewsArticleWithTopic{}, errors.New("database read error"))
@@ -490,11 +485,11 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 			testname: "no fields to update and same topics",
 			slug:     "slug-6",
 			mockReq: request.UpdateNewsArticleRequest{
-				Title:    stringPtr("Existing Title"),
-				Content:  stringPtr("Existing Content"),
-				Summary:  stringPtr("Existing Summary"),
-				Slug:     stringPtr("slug-6"),
-				Status:   stringPtr(string(entity.StatusDraft)),
+				Title:    utils.StringPtr("Existing Title"),
+				Content:  utils.StringPtr("Existing Content"),
+				Summary:  utils.StringPtr("Existing Summary"),
+				Slug:     utils.StringPtr("slug-6"),
+				Status:   utils.StringPtr(string(entity.StatusDraft)),
 				TopicIDs: []int32{1, 2},
 			},
 			initMock: func() {
@@ -502,7 +497,7 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 					ID:        6,
 					Title:     "Existing Title",
 					Content:   "Existing Content",
-					Summary:   stringPtr("Existing Summary"),
+					Summary:   utils.StringPtr("Existing Summary"),
 					Slug:      "slug-6",
 					Status:    entity.StatusDraft,
 					Topics:    []int32{1, 2},
@@ -519,14 +514,14 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 			testname: "duplicate slug error on UpdateArticleFields",
 			slug:     "slug-7",
 			mockReq: request.UpdateNewsArticleRequest{
-				Slug: stringPtr("duplicate-slug-value"),
+				Slug: utils.StringPtr("duplicate-slug-value"),
 			},
 			initMock: func() {
 				newsArticleRepo.EXPECT().GetArticleBySlug(ctx, "slug-7").Return(entity.NewsArticleWithTopic{
 					ID:        7,
 					Title:     "Title 7",
 					Content:   "Content 7",
-					Summary:   stringPtr("Summary 7"),
+					Summary:   utils.StringPtr("Summary 7"),
 					Slug:      "slug-7",
 					Status:    entity.StatusDraft,
 					Topics:    []int32{},
@@ -544,14 +539,14 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 			testname: "failed to update news article fields - generic error",
 			slug:     "slug-8",
 			mockReq: request.UpdateNewsArticleRequest{
-				Title: stringPtr("New Title 8"),
+				Title: utils.StringPtr("New Title 8"),
 			},
 			initMock: func() {
 				newsArticleRepo.EXPECT().GetArticleBySlug(ctx, "slug-8").Return(entity.NewsArticleWithTopic{
 					ID:        8,
 					Title:     "Title 8",
 					Content:   "Content 8",
-					Summary:   stringPtr("Summary 8"),
+					Summary:   utils.StringPtr("Summary 8"),
 					Slug:      "slug-8",
 					Status:    entity.StatusDraft,
 					Topics:    []int32{},
@@ -576,7 +571,7 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 					ID:        9,
 					Title:     "Title 9",
 					Content:   "Content 9",
-					Summary:   stringPtr("Summary 9"),
+					Summary:   utils.StringPtr("Summary 9"),
 					Slug:      "slug-9",
 					Status:    entity.StatusDraft,
 					Topics:    []int32{1, 2},
@@ -600,10 +595,6 @@ func Test_UpdateNewsArticleBySlug(t *testing.T) {
 			tt.assertion(err)
 		})
 	}
-}
-
-func strToPtr(s string) *string {
-	return &s
 }
 
 func Test_DeleteNewsArticleBySlug(t *testing.T) {

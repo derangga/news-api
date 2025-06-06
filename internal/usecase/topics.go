@@ -58,8 +58,8 @@ func (u topicsUsecase) GetTopics(ctx context.Context) ([]response.Topic, error) 
 	return res, nil
 }
 
-func (u topicsUsecase) UpdateTopic(ctx context.Context, body request.UpdateTopicRequest) error {
-	currentTopic, err := u.repo.GetByID(ctx, body.ID)
+func (u topicsUsecase) UpdateTopic(ctx context.Context, id int, body request.UpdateTopicRequest) error {
+	currentTopic, err := u.repo.GetByID(ctx, id)
 	if err != nil {
 		if notFound := utils.IsNoRowError(err); notFound {
 			return exception.ErrTopicNotFound

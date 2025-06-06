@@ -34,7 +34,7 @@ func Test_CreateNewsArticle(t *testing.T) {
 			entity: entity.NewsArticle{
 				Title:    "Title",
 				Content:  "Content",
-				Summary:  stringPtr("Summary"),
+				Summary:  utils.StringPtr("Summary"),
 				AuthorID: 1,
 				Slug:     "sample-slug",
 				Status:   "published",
@@ -57,7 +57,7 @@ func Test_CreateNewsArticle(t *testing.T) {
 			entity: entity.NewsArticle{
 				Title:    "Title",
 				Content:  "Content",
-				Summary:  stringPtr("Summary"),
+				Summary:  utils.StringPtr("Summary"),
 				AuthorID: 1,
 				Slug:     "sample-slug",
 				Status:   "published",

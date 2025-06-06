@@ -12,3 +12,7 @@ func GenerateMockDb() (*sql.DB, *sqlx.DB, sqlmock.Sqlmock) {
 	sqlxDB := sqlx.NewDb(mockDb, "sqlmock")
 	return mockDb, sqlxDB, mockSql
 }
+
+func StringPtr(s string) *string {
+	return &s
+}

@@ -12,3 +12,10 @@ run_api:
 mocks_gen:
 	mockgen -source=internal/usecase/usecase.go -destination=mocks/usecase/usecase.go
 	mockgen -source=internal/repository/repository.go -destination=mocks/repository/repository.go
+
+run_test:
+	go test -v -coverprofile=coverage.out ./internal/...
+
+run_test_coverage:
+	go test ./... -coverprofile=cover.out
+	go tool cover -html=cover.out
