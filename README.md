@@ -54,19 +54,21 @@ cp env.sample .env
 docker compose up
 ```
 
-3. Apply the database schema:
+3. Before use `make` command, please uncomment include `.env` inside `Makefile`
+
+4. Apply the database schema:
 
 ```bash
 make migrate_up
 ```
 
-4. Run the API server:
+5 Run the API server:
 
 ```bash
 make run_api
 ```
 
-5. Generate mocks for unit testing:
+6. Generate mocks for unit testing:
 
 ```bash
 make mocks_gen
