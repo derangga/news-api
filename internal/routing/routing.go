@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"newsapi/internal/handler"
 
+	"github.com/labstack/echo-contrib/echoprometheus"
 	"github.com/labstack/echo/v4"
 )
 
@@ -24,6 +25,8 @@ func NewAppRoutes(
 
 func (r AppRoutes) RegisterRoute() {
 	h := r.handler
+
+	r.registerRoute(http.MethodGet, "/metrics", echoprometheus.NewHandler())
 
 	users := r.echo.Group("/api/v1/users")
 	r.registerGroupRoute(users, http.MethodPost, "", h.UsersHandler.CreateUser)

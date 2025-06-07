@@ -79,3 +79,9 @@ To build and serve the project:
 ```
 make run
 ```
+
+## 🖥️ Monitoring
+
+The news app is integrated with prometheus
+
+<img src="docs/monitoring-sample.png" />
