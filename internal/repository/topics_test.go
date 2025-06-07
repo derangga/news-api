@@ -202,3 +202,53 @@ func Test_UpdateTopics(t *testing.T) {
 		})
 	}
 }
+
+func Test_Delete(t *testing.T) {
+	mockDb, sqlxDB, mockSql := utils.GenerateMockDb()
+	defer mockDb.Close()
+
+	repos := repository.NewTopicRepository(sqlxDB)
+	ctx := context.Background()
+
+	query := `UPDATE topics SET deleted_at = NOW\(\) WHERE id = \$1 AND deleted_at IS NULL`
+
+	tests := []struct {
+		testname  string
+		id        int
+		initMock  func(id int)
+		assertion func(err error)
+	}{
+		{
+			testname: "delete topic successfully",
+			id:       1,
+			initMock: func(id int) {
+				mockSql.ExpectExec(query).
+					WithArgs(id).
+					WillReturnResult(sqlmock.NewResult(0, 1))
+			},
+			assertion: func(err error) {
+				assert.NoError(t, err)
+			},
+		},
+		{
+			testname: "delete topic fails",
+			id:       4,
+			initMock: func(id int) {
+				mockSql.ExpectExec(query).
+					WithArgs(id).
+					WillReturnError(errors.New("db error"))
+			},
+			assertion: func(err error) {
+				assert.Error(t, err)
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.testname, func(t *testing.T) {
+			tt.initMock(tt.id)
+			err := repos.Delete(ctx, tt.id)
+			tt.assertion(err)
+		})
+	}
+}

@@ -71,7 +71,7 @@ func (h TopicsHandler) UpdateTopic(c echo.Context) error {
 		log.Errorf("TopicHandler.bind: %w", err)
 		return responder.ResponseBadRequest(c, "")
 	}
-	fmt.Println(req)
+
 	err = h.validator.Struct(req)
 	if err != nil {
 		log.Errorf("TopicHandler.validateStruct: %w", err)
@@ -86,4 +86,18 @@ func (h TopicsHandler) UpdateTopic(c echo.Context) error {
 	}
 
 	return responder.RespondOK(c, nil, "topic updated")
+}
+
+func (h TopicsHandler) DeleteTopic(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return responder.ResponseBadRequest(c, "invalid id")
+	}
+
+	err = h.uc.DeleteTopic(c.Request().Context(), id)
+	if err != nil {
+		return responder.ResponseUnprocessableEntity(c, err.Error())
+	}
+
+	return responder.RespondOK(c, nil, fmt.Sprintf("success delete topic with id %d", id))
 }

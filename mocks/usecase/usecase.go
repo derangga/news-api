@@ -183,6 +183,20 @@ func (mr *MockTopicsUsecaseMockRecorder) CreateTopic(ctx, body interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTopic", reflect.TypeOf((*MockTopicsUsecase)(nil).CreateTopic), ctx, body)
 }
 
+// DeleteTopic mocks base method.
+func (m *MockTopicsUsecase) DeleteTopic(ctx context.Context, id int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteTopic", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteTopic indicates an expected call of DeleteTopic.
+func (mr *MockTopicsUsecaseMockRecorder) DeleteTopic(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTopic", reflect.TypeOf((*MockTopicsUsecase)(nil).DeleteTopic), ctx, id)
+}
+
 // GetTopics mocks base method.
 func (m *MockTopicsUsecase) GetTopics(ctx context.Context) ([]response.Topic, error) {
 	m.ctrl.T.Helper()

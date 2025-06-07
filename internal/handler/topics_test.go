@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"newsapi/internal/exception"
@@ -12,6 +13,7 @@ import (
 	"newsapi/internal/model/response"
 	"newsapi/internal/utils"
 	mock_usecase "newsapi/mocks/usecase"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -290,6 +292,62 @@ func TestTopicsHandler_UpdateTopic(t *testing.T) {
 			h.UpdateTopic(c)
 
 			tt.assertion(rec, tt.response)
+		})
+	}
+}
+
+func Test_DeleteTopic(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	accessor := newTopicsHandlerAccessor(ctrl)
+	h := accessor.handler
+	e := echo.New()
+
+	tests := []struct {
+		name      string
+		id        int
+		initMock  func(id int)
+		assertion func(*httptest.ResponseRecorder, error)
+	}{
+		{
+			name: "deletes topic successfully",
+			id:   1,
+			initMock: func(id int) {
+				accessor.topicsUC.EXPECT().
+					DeleteTopic(gomock.Any(), id).Return(nil)
+			},
+			assertion: func(rr *httptest.ResponseRecorder, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, rr.Code)
+			},
+		},
+		{
+			name: "returns 422 on delete error",
+			id:   1,
+			initMock: func(id int) {
+				accessor.topicsUC.EXPECT().
+					DeleteTopic(gomock.Any(), id).Return(errors.New("delete error"))
+			},
+			assertion: func(rr *httptest.ResponseRecorder, err error) {
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusUnprocessableEntity, rr.Code)
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.initMock(tt.id)
+
+			req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/api/v1/news/%d", tt.id), nil)
+			rec := httptest.NewRecorder()
+			c := e.NewContext(req, rec)
+			c.SetParamNames("id")
+			c.SetParamValues(strconv.Itoa(tt.id))
+
+			err := h.DeleteTopic(c)
+			tt.assertion(rec, err)
 		})
 	}
 }

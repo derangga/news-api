@@ -15,6 +15,7 @@ type TopicsRepository interface {
 	GetAll(ctx context.Context) ([]entity.Topic, error)
 	GetByID(ctx context.Context, id int) (entity.Topic, error)
 	UpdateTopicFileds(ctx context.Context, topic *entity.Topic, updateFields []string) error
+	Delete(ctx context.Context, id int) error
 }
 
 type NewsArticlesRepository interface {

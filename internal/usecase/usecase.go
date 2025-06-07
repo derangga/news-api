@@ -23,4 +23,5 @@ type TopicsUsecase interface {
 	CreateTopic(ctx context.Context, body request.CreateTopicRequest) error
 	GetTopics(ctx context.Context) ([]response.Topic, error)
 	UpdateTopic(ctx context.Context, id int, body request.UpdateTopicRequest) error
+	DeleteTopic(ctx context.Context, id int) error
 }

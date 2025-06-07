@@ -6,4 +6,5 @@ var (
 	ErrFailedGetTopic    = CustomError{Code: 20003, Message: "failed get topic"}
 	ErrFailedUpdateTopic = CustomError{Code: 20004, Message: "failed update topic"}
 	ErrNoFieldUpdate     = CustomError{Code: 20005, Message: "no field update"}
+	ErrFailedDeleteTopic = CustomError{Code: 20006, Message: "failed delete topic"}
 )

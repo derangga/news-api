@@ -103,3 +103,23 @@ func (u topicsUsecase) UpdateTopic(ctx context.Context, id int, body request.Upd
 
 	return nil
 }
+
+func (u topicsUsecase) DeleteTopic(ctx context.Context, id int) error {
+	currentTopic, err := u.repo.GetByID(ctx, id)
+	if err != nil {
+		if notFound := utils.IsNoRowError(err); notFound {
+			return exception.ErrTopicNotFound
+		}
+
+		log.Errorf("failed get topic: %s", err.Error())
+		return exception.ErrFailedUpdateTopic
+	}
+
+	err = u.repo.Delete(ctx, currentTopic.ID)
+	if err != nil {
+		log.Errorf("failed delete topic: %s", err.Error())
+		return exception.ErrFailedDeleteTopic
+	}
+
+	return nil
+}

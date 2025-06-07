@@ -1,65 +1,81 @@
 # [News API](https://github.com/derangga/news-api)
 
-A simple CRUD news and topic management.
+A simple CRUD API for managing news articles and topics. The application is built using a clean layered architecture to ensure separation of concerns, making it easy to write unit tests and maintain the codebase.
 
-# Database schema
+<img src="docs/design-system.png" width="500px" alt="design system"/>
 
-The project has 4 tables: User, Topics, News Articles, and News Topics
+ref: [Design System](https://www.mermaidchart.com/app/projects/a814a614-e74c-4e79-afa1-5b0c6cba5419/diagrams/b70f13c2-745d-480a-ae52-18b5dfbc4153/version/v0.1/edit)
+
+# 📊 Database schema
+
+The project uses four main tables: `users`, `topics`, `news_articles`, and `news_topics`.
 
 Generated from [dbdiagrams](https://dbdiagram.io/d/news-api-68429013ba2a4ac57b1c0116)
 
 <img src="docs/news-api-table.png" />
 <br><br/>
 
-# Development
+# 🚀 Getting Started
 
 ## Pre-requisite
+
+Make sure the following tools are installed:
 
 - Install Python3
 - PostgreSQL
 - [Golang migrate](https://github.com/golang-migrate/migrate)
 - [Golang mock](https://github.com/golang/mock)
 
-## Api Documentation
+## 🔍 Api Documentation
 
-Before develop any new endpoints, ensure you write the API documentation.
+Before developing new endpoints, please update the API documentation.
 
-1. Navigate to `/api-docs` dir, update the `news-api.yaml`
-2. Run the API Docs by using python `http.server`.
+1. Go to the `/api-docs` directory and modify `news-api.yaml`.
+2. Serve the docs locally using Python `http.server`.
 
 ```bash
-$ cd api-docs/
-$ python3 -m http.server 8081
+cd api-docs/
+python3 -m http.server 8081
 ```
 
-## Development
+3. You can also import the Postman collection found in the `/docs` directory.
 
-1. Make `.env` file
+## ⚙️ Development Setup
+
+1. Copy the environment template:
 
 ```bash
 cp env.sample .env
 ```
 
-2. Start the database service. If you choose using docker, you can use `docker-compose` configuration
+2. Start the database (using Docker Compose):
 
 ```bash
 docker compose up
 ```
 
-3. Push the database schema
+3. Apply the database schema:
 
 ```bash
 make migrate_up
 ```
 
-4. Run the project
+4. Run the API server:
 
 ```bash
 make run_api
 ```
 
-5. To update `/mocks` file for unit test you can run
+5. Generate mocks for unit testing:
 
 ```bash
 make mocks_gen
+```
+
+## 🛠️ Build and Serve Project
+
+To build and serve the project:
+
+```
+make run
 ```

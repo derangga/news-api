@@ -424,3 +424,80 @@ func Test_UpdateTopic(t *testing.T) {
 		})
 	}
 }
+
+func Test_DeleteTopic(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	accessor := newTopicAccessor(ctrl)
+	topicUC := accessor.topicUC
+	topicRepo := accessor.topicRepo
+	ctx := context.Background()
+
+	tests := []struct {
+		testname  string
+		id        int
+		initMock  func(id int)
+		assertion func(err error)
+	}{
+		{
+			testname: "delete topic but no topic id found then return error",
+			id:       1,
+			initMock: func(id int) {
+				topicRepo.EXPECT().GetByID(gomock.Any(), id).Return(entity.Topic{}, sql.ErrNoRows)
+			},
+			assertion: func(err error) {
+				assert.Error(t, err)
+				assert.Equal(t, exception.ErrTopicNotFound, err)
+			},
+		},
+		{
+			testname: "delete topic but db throw error then return error",
+			id:       1,
+			initMock: func(id int) {
+				topicRepo.EXPECT().GetByID(gomock.Any(), id).Return(entity.Topic{}, errors.New("error"))
+			},
+			assertion: func(err error) {
+				assert.Error(t, err)
+				assert.Equal(t, exception.ErrFailedUpdateTopic, err)
+			},
+		},
+		{
+			testname: "delete topic failed on update delete then return error",
+			id:       1,
+			initMock: func(id int) {
+				topicRepo.EXPECT().GetByID(gomock.Any(), id).Return(entity.Topic{
+					ID:   1,
+					Name: "test topic",
+				}, nil)
+				topicRepo.EXPECT().Delete(gomock.Any(), id).Return(errors.New("failed update"))
+			},
+			assertion: func(err error) {
+				assert.Error(t, err)
+				assert.Equal(t, exception.ErrFailedDeleteTopic, err)
+			},
+		},
+		{
+			testname: "delete topic and success then return error nil",
+			id:       1,
+			initMock: func(id int) {
+				topicRepo.EXPECT().GetByID(gomock.Any(), id).Return(entity.Topic{
+					ID:   1,
+					Name: "test topic",
+				}, nil)
+				topicRepo.EXPECT().Delete(gomock.Any(), id).Return(nil)
+			},
+			assertion: func(err error) {
+				assert.NoError(t, err)
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.testname, func(t *testing.T) {
+			tt.initMock(tt.id)
+			err := topicUC.DeleteTopic(ctx, tt.id)
+			tt.assertion(err)
+		})
+	}
+}

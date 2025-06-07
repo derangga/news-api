@@ -1,0 +1,314 @@
+{
+	"info": {
+		"_postman_id": "ba51b6be-85eb-4182-a911-75215110b11c",
+		"name": "News API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3537804"
+	},
+	"item": [
+		{
+			"name": "topic",
+			"item": [
+				{
+					"name": "Create Topic",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Politics\",\n    \"description\": \"A topic of politics in the world\",\n    \"slug\": \"politics\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8666/api/v1/topics",
+							"host": [
+								"localhost"
+							],
+							"port": "8666",
+							"path": [
+								"api",
+								"v1",
+								"topics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Topic",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8666/api/v1/topics",
+							"host": [
+								"localhost"
+							],
+							"port": "8666",
+							"path": [
+								"api",
+								"v1",
+								"topics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Topic",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test topic update\",\n    \"description\": \"this is new topic\",\n    \"slug\": \"technology\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8666/api/v1/topics/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8666",
+							"path": [
+								"api",
+								"v1",
+								"topics",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete topic",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"AI Revolution in Healthcare\",\n    \"content\": \"Artificial Intelligence is transforming healthcare with new diagnostic tools and treatment methods...\",\n    \"summary\": \"AI is changing how we approach medical diagnosis and treatment.\",\n    \"author_id\": 1,\n    \"slug\": \"ai-revolution-healthcare\",\n    \"topic_ids\": [1,5]\n}"
+						},
+						"url": {
+							"raw": "localhost:8666/api/v1/topics/4",
+							"host": [
+								"localhost"
+							],
+							"port": "8666",
+							"path": [
+								"api",
+								"v1",
+								"topics",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "news",
+			"item": [
+				{
+					"name": "Get All News",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8666/api/v1/news?status=draft&topic_id=5",
+							"host": [
+								"localhost"
+							],
+							"port": "8666",
+							"path": [
+								"api",
+								"v1",
+								"news"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "draft"
+								},
+								{
+									"key": "topic_id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create news",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"AI Revolution in Healthcare\",\n    \"content\": \"Artificial Intelligence is transforming healthcare with new diagnostic tools and treatment methods...\",\n    \"summary\": \"AI is changing how we approach medical diagnosis and treatment.\",\n    \"author_id\": 1,\n    \"slug\": \"ai-revolution-healthcare\",\n    \"topic_ids\": [1,5]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8666/api/v1/news",
+							"host": [
+								"localhost"
+							],
+							"port": "8666",
+							"path": [
+								"api",
+								"v1",
+								"news"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get News By Slug",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8666/api/v1/news/ai-revolution-healthcare",
+							"host": [
+								"localhost"
+							],
+							"port": "8666",
+							"path": [
+								"api",
+								"v1",
+								"news",
+								"ai-revolution-healthcare"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update News By Slug",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"AI Revolution in Healthcare\",\n    \"topic_ids\": [1]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8666/api/v1/news/ai-revolution-healthcare",
+							"host": [
+								"localhost"
+							],
+							"port": "8666",
+							"path": [
+								"api",
+								"v1",
+								"news",
+								"ai-revolution-healthcare"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete News",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8666/api/v1/news/new-climate-policy",
+							"host": [
+								"localhost"
+							],
+							"port": "8666",
+							"path": [
+								"api",
+								"v1",
+								"news",
+								"new-climate-policy"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create User",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"johndoe@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8666/api/v1/users",
+					"host": [
+						"localhost"
+					],
+					"port": "8666",
+					"path": [
+						"api",
+						"v1",
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

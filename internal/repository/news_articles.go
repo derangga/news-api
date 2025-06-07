@@ -105,7 +105,7 @@ func (r newsArticlesRepository) GetAll(ctx context.Context, filter dto.NewsFilte
 				na.created_at,
 				ARRAY_AGG(nt.topic_id) AS topic_ids
 			FROM news_articles na
-			INNER JOIN news_topics nt ON na.id = nt.news_article_id
+			LEFT JOIN news_topics nt ON na.id = nt.news_article_id
 			WHERE
 				na.deleted_at IS NULL
 				AND nt.deleted_at IS NULL

@@ -98,7 +98,28 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MessageResponse"
+                $ref: "#/components/schemas/TopicSuccessUpdatedResponse"
+    delete:
+      summary: Delete Topic by ID
+      description: Deletes a topic article by its id.
+      operationId: deleteTopicByID
+      tags:
+        - Topics
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the topic to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Topic deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TopicSuccessDeleteResponse"
 
   /news:
     get:
@@ -160,7 +181,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MessageResponse"
+                $ref: "#/components/schemas/NewNewsCreatedResponse"
 
   /news/{slug}:
     get:
@@ -217,7 +238,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MessageResponse"
+                $ref: "#/components/schemas/NewNewsUpdatedResponse"
 
     delete:
       summary: Delete News by Slug
@@ -233,12 +254,12 @@ paths:
           schema:
             type: string
       responses:
-        "201":
+        "200":
           description: News deleted successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MessageResponse"
+                $ref: "#/components/schemas/NewsSuccessDeleteResponse"
 
 components:
   schemas:
@@ -446,6 +467,56 @@ components:
         http_status:
           type: integer
           example: 201
+
+    TopicSuccessUpdatedResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "topic updated"
+        http_status:
+          type: integer
+          example: 200
+
+    TopicSuccessDeleteResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "topic deleted"
+        http_status:
+          type: integer
+          example: 200
+
+    NewNewsCreatedResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "news created"
+        http_status:
+          type: integer
+          example: 201
+
+    NewNewsUpdatedResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "news updated"
+        http_status:
+          type: integer
+          example: 200
+
+    NewsSuccessDeleteResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "news deleted"
+        http_status:
+          type: integer
+          example: 200
 
     NewUserResponse:
       type: object

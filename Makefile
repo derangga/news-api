@@ -21,3 +21,9 @@ run_test:
 run_test_coverage:
 	go test ./... -coverprofile=cover.out
 	go tool cover -html=cover.out
+
+build:
+	go build -o bin/news-api ./cmd/main
+
+run: build
+	./bin/news-api

@@ -32,6 +32,7 @@ func (r AppRoutes) RegisterRoute() {
 	r.registerGroupRoute(topics, http.MethodGet, "", h.TopicsHandler.GetTopics)
 	r.registerGroupRoute(topics, http.MethodPost, "", h.TopicsHandler.CreateTopic)
 	r.registerGroupRoute(topics, http.MethodPatch, "/:id", h.TopicsHandler.UpdateTopic)
+	r.registerGroupRoute(topics, http.MethodDelete, "/:id", h.TopicsHandler.DeleteTopic)
 
 	newsArticle := r.echo.Group("/api/v1/news")
 	r.registerGroupRoute(newsArticle, http.MethodGet, "", h.NewsArticlesHandler.GetNewsArticles)
